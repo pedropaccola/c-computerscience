@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//
+// DOUBLE LINKED LIST
+//
+
 typedef struct node {
   int data;
   struct node *next;
@@ -101,7 +105,7 @@ void PopFront(linked_list_t *list) {
 void PopBack(linked_list_t *list) {
   printf("PopBack: %d\n", list->tail->data);
 
-  if (!list->head) {
+  if (!list->tail) {
     printf("List is empty");
     return;
   }
