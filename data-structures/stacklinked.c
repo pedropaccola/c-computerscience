@@ -17,22 +17,46 @@ typedef struct stack_t {
 } stack_t;
 
 node_t *new_node(int value) {
-  node_t *new = (node_t *)malloc(sizeof(node_t));
+  node_t *new = malloc(sizeof(node_t));
   if (!new) {
     printf("Failed to create Node");
-    return NULL;
+    exit(EXIT_FAILURE);
   }
   new->data = value;
+  new->next = NULL;
   return new;
 }
 
 stack_t *new_stack() {
-  stack_t *stack = (stack_t *)malloc(sizeof(stack_t));
+  stack_t *stack = malloc(sizeof(stack_t));
   if (!stack) {
     printf("Failed to create Stack");
+    exit(EXIT_FAILURE);
   }
   stack->head = NULL;
   return stack;
+}
+
+void destroy_stack(stack_t *stack) {
+  node_t *ptr = stack->head;
+  while (ptr) {
+    node_t *temp = ptr;
+    ptr = ptr->next;
+    free(temp);
+  }
+  free(stack);
+  return;
+}
+
+bool is_empty(const stack_t *stack) { return (!stack->head); }
+
+int peek(const stack_t *stack) {
+  if (is_empty(stack)) {
+    printf("Stack is empty\n");
+    return 0;
+  }
+
+  return stack->head->data;
 }
 
 void push(stack_t *stack, int value) {
@@ -45,29 +69,20 @@ void push(stack_t *stack, int value) {
 }
 
 int pop(stack_t *stack) {
-  if (!stack->head) {
+  if (is_empty(stack)) {
     printf("Stack is empty\n");
     return 0;
   }
 
-  printf("Pop element %d\n", stack->head->data);
   int value = stack->head->data;
+  printf("Pop element %d\n", value);
   node_t *del = stack->head;
   stack->head = stack->head->next;
   free(del);
   return value;
 }
 
-int peek(stack_t *stack) {
-  if (!stack->head) {
-    printf("Stack is empty\n");
-    return 0;
-  }
-
-  return stack->head->data;
-}
-
-void print_stack(stack_t *stack) {
+void print_stack(const stack_t *stack) {
   printf("Printing stack:\n");
   if (!stack->head) {
     assert(stack->head == NULL);
@@ -99,4 +114,5 @@ int main() {
     top_element = pop(stack);
     print_stack(stack);
   }
+  destroy_stack(stack);
 }

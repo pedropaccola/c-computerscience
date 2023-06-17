@@ -6,13 +6,15 @@
 // QUEUE
 //
 
-typedef struct Stack {
-  int top;
-  int capacity;
-  int *elements;
-} stack_t;
+#define MAX_QUEUE_SIZE 10
 
-stack_t *NewStack(int capacity) {
+typedef struct queue {
+  int front;
+  int rear;
+  int elements[MAX_QUEUE_SIZE];
+} queue_t;
+
+queue_t *new_queue(int capacity) {
   stack_t *stack = (stack_t *)malloc(sizeof(stack_t));
   stack->top = -1;
   stack->capacity = capacity;
@@ -20,17 +22,17 @@ stack_t *NewStack(int capacity) {
   return stack;
 }
 
-bool IsEmpty(stack_t *stack) { return stack->top == -1; }
+bool is_empty(stack_t *stack) { return stack->top == -1; }
 
-bool IsFull(stack_t *stack) {
+bool is_full(stack_t *stack) {
   int top = stack->top + 1;
   return top == stack->capacity;
 }
 
-void Push(stack_t *stack, int value) {
+void push(stack_t *stack, int value) {
   printf("Push element %d\n", value);
 
-  if (IsFull(stack)) {
+  if (is_full(stack)) {
     printf("Stack is full\n");
     return;
   }
@@ -42,8 +44,8 @@ void Push(stack_t *stack, int value) {
   // *(ptr + stack->top) = value;
 }
 
-int Pop(stack_t *stack) {
-  if (IsEmpty(stack)) {
+int pop(stack_t *stack) {
+  if (is_empty(stack)) {
     printf("Stack is empty\n");
     return 0;
   }
@@ -58,8 +60,8 @@ int Pop(stack_t *stack) {
   stack->top--;
 }
 
-int Peek(stack_t *stack) {
-  if (IsEmpty(stack)) {
+int peek(stack_t *stack) {
+  if (is_empty(stack)) {
     printf("Stack is empty\n");
     return 0;
   }
@@ -70,7 +72,7 @@ int Peek(stack_t *stack) {
   // return *(ptr + stack->top);
 }
 
-void PrintStack(stack_t *stack) {
+void print_stack(stack_t *stack) {
   printf("top: %d, elements: ", stack->top);
 
   for (int i = 0; i <= stack->top; i++) {
@@ -84,16 +86,16 @@ void PrintStack(stack_t *stack) {
 
 int main() {
   int capacity = 10;
-  stack_t *stack = NewStack(capacity);
-  PrintStack(stack);
+  stack_t *stack = new_stack(capacity);
+  print_stack(stack);
   for (int i = 0; i <= capacity; i++) {
-    Push(stack, i * 2);
-    PrintStack(stack);
+    push(stack, i * 2);
+    print_stack(stack);
   }
-  int peek = Peek(stack);
-  printf("Peeking %d\n", peek);
+  int top_element = peek(stack);
+  printf("Peeking %d\n", top_element);
   for (int i = 0; i <= capacity; i++) {
-    peek = Pop(stack);
-    PrintStack(stack);
+    top_element = pop(stack);
+    print_stack(stack);
   }
 }

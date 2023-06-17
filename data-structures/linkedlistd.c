@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -18,34 +19,48 @@ typedef struct linked_list_t {
 } linked_list_t;
 
 node_t *new_node(int value) {
-  node_t *new = (node_t *)malloc(sizeof(node_t));
+  node_t *new = malloc(sizeof(node_t));
   if (!new) {
     printf("Failed to create Node");
-    return NULL;
+    exit(EXIT_FAILURE);
   }
   new->data = value;
+  new->next = NULL;
+  new->prev = NULL;
   return new;
 }
 
 linked_list_t *new_linked_list() {
-  linked_list_t *list = (linked_list_t *)malloc(sizeof(linked_list_t));
+  linked_list_t *list = malloc(sizeof(linked_list_t));
   if (!list) {
     printf("Failed to create List");
-    return NULL;
+    exit(EXIT_FAILURE);
   }
   list->head = NULL;
   list->tail = NULL;
   return list;
 }
 
+void destroy_list(linked_list_t *list) {
+  node_t *ptr = list->head;
+  while (ptr) {
+    node_t *temp = ptr;
+    ptr = ptr->next;
+    free(temp);
+  }
+  free(list);
+  return;
+}
+
+bool is_empty(const linked_list_t *list) { return (!list->head); }
+
 void push(linked_list_t *list, int value) {
   printf("PushFront: %d\n", value);
 
   node_t *new = new_node(value);
-  new->prev = NULL;
 
   // empty list before insertion
-  if (!list->head) {
+  if (is_empty(list)) {
     // head and tail will point to the node
     list->head = new;
     list->tail = new;
@@ -64,10 +79,9 @@ void push_back(linked_list_t *list, int value) {
   printf("PushBack: %d\n", value);
 
   node_t *new = new_node(value);
-  new->next = NULL;
 
   // empty list before insertion
-  if (!list->tail) {
+  if (is_empty(list)) {
     // head and tail will point to the node
     list->head = new;
     list->tail = new;
@@ -82,93 +96,54 @@ void push_back(linked_list_t *list, int value) {
   }
 }
 
-void pop(linked_list_t *list) {
-  printf("PopFront: %d\n", list->head->data);
-
-  if (!list->head) {
+int pop(linked_list_t *list) {
+  if (is_empty(list)) {
     printf("List is empty");
-    return;
+    return 0;
   }
 
+  int value = list->head->data;
+  printf("PopFront: %d\n", value);
+  node_t *del = list->head;
+
   if (list->head == list->tail) { // only 1 element, update both head and tail
-    node_t *del = list->head;
     list->head = NULL;
     list->tail = NULL;
-    free(del); // delete node
   } else {
-    node_t *del = list->head;
     // update the head to the next node
     list->head = list->head->next;
     list->head->prev = NULL;
-    free(del); // delete node
   }
+  free(del);
+  return value;
 }
 
-void pop_back(linked_list_t *list) {
-  printf("PopBack: %d\n", list->tail->data);
-
-  if (!list->tail) {
+int pop_back(linked_list_t *list) {
+  if (is_empty(list)) {
     printf("List is empty");
-    return;
+    return 0;
   }
 
+  int value = list->tail->data;
+  printf("PopBack: %d\n", value);
+  node_t *del = list->tail;
+
   if (list->head == list->tail) { // only 1 element, update both head and tail
-    node_t *del = list->head;
     list->head = NULL;
     list->tail = NULL;
-    free(del); // delete node
   } else {
-    node_t *del = list->tail;
     // update the tail to the previous node
     list->tail = list->tail->prev;
     list->tail->next = NULL;
-    free(del); // delete node
   }
+
+  free(del);
+  return value;
 }
 
-void add_after(linked_list_t *list, node_t *node, int value) {
-  printf("Add after %d: %d\n", node->data, value);
-
-  node_t *new = new_node(value);
-  new->next = node->next;
-  new->prev = node;
-
-  node->next = new;
-
-  if (new->next != NULL) {
-    // if there's a next node, update its prev pointer
-    new->next->prev = new;
-  }
-
-  if (list->tail == node) {
-    // if inserted after the last element, update tail
-    list->tail = new;
-  }
-}
-
-void AddBefore(linked_list_t *list, node_t *node, int value) {
-  printf("Add before %d: %d\n", node->data, value);
-
-  node_t *new = new_node(value);
-  new->next = node;
-  new->prev = node->prev;
-
-  node->prev = new;
-
-  if (new->prev != NULL) {
-    // if there's a previous node, update its next pointer
-    new->prev->next = new;
-  }
-
-  if (list->head == node) {
-    // if inserted before the first element, update head
-    list->head = new;
-  }
-}
-
-void print_elements(linked_list_t *list) {
+void print_elements(const linked_list_t *list) {
   printf("Printing List:\n");
-  if (!list->head) {
+  if (is_empty(list)) {
     assert(list->head == NULL);
     assert(list->tail == NULL);
     printf("--No elements\n\n");
@@ -186,6 +161,7 @@ void print_elements(linked_list_t *list) {
 }
 
 int main() {
+  int value;
   linked_list_t *list = new_linked_list();
   print_elements(list);
   push(list, 1);
@@ -196,16 +172,17 @@ int main() {
   print_elements(list);
   push_back(list, 4);
   print_elements(list);
-  pop(list);
+  value = pop(list);
   print_elements(list);
-  pop_back(list);
+  value = pop_back(list);
   print_elements(list);
-  pop_back(list);
+  value = pop_back(list);
   print_elements(list);
-  pop(list);
+  value = pop(list);
   print_elements(list);
   push_back(list, 5);
   print_elements(list);
-  pop_back(list);
+  value = pop_back(list);
   print_elements(list);
+  destroy_list(list);
 }
