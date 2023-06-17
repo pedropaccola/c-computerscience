@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct _Custom_Int_Array {
+//
+// ARRAY
+//
+
+typedef struct Custom_Int_Array {
   int *array;
   int capacity;
 } int_array;
 
-int_array *NewIntArray(int capacity) {
+int_array *new_int_array(int capacity) {
   int_array *ptr = (int_array *)malloc(sizeof(int_array));
   if (!ptr) {
     printf("Failed to initialize array struct\n");
@@ -21,7 +25,7 @@ int_array *NewIntArray(int capacity) {
   return ptr;
 }
 
-void UpdateElementAtIndex(int_array *arr, int element, int index) {
+void update_element_at_index(int_array *arr, int element, int index) {
   if (index < 0 || index >= arr->capacity) {
     printf("%s\n", "Index out of bounds");
   }
@@ -30,7 +34,7 @@ void UpdateElementAtIndex(int_array *arr, int element, int index) {
   // or arr->array[index] = element;
 }
 
-void DestroyArray(int_array *arr) {
+void destroy_array(int_array *arr) {
   free(arr->array);
   free(arr);
 }
@@ -40,16 +44,16 @@ int main() {
 
   int capacity = 5;
 
-  int_array *array = NewIntArray(capacity);
+  int_array *array = new_int_array(capacity);
   printf("array address %p\n", array);
 
   for (int i = 0; i < capacity; i++) {
-    UpdateElementAtIndex(array, i + 1, i);
+    update_element_at_index(array, i + 1, i);
     // or array->array[i] = i + 1;
     printf("%dth element: %d\n", i, *(array->array + i));
     // or printf("%dth element: %d", i, array->array[i]);
   }
 
-  DestroyArray(array);
+  destroy_array(array);
   printf("-------------");
 }

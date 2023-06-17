@@ -1,23 +1,28 @@
 # Data Structures
 array:
-	@gcc data-structures/array.c -o data-structures/bin/array.out
-	@./data-structures/bin/array.out
+	@gcc data-structures/array.c -o data-structures/bin/c.out
+	@./data-structures/bin/c.out
 linkedlist:
-	@gcc data-structures/linkedlist.c -o data-structures/bin/linkedlist.out
-	@./data-structures/bin/linkedlist.out
+	@gcc data-structures/linkedlist.c -o data-structures/bin/c.out
+	@./data-structures/bin/c.out
 linkedlistc:
-	@gcc data-structures/linkedlistc.c -o data-structures/bin/linkedlistc.out
-	@./data-structures/bin/linkedlistc.out
+	@gcc data-structures/linkedlistc.c -o data-structures/bin/c.out
+	@./data-structures/bin/c.out
 linkedlistd:
-	@gcc data-structures/linkedlistd.c -o data-structures/bin/linkedlistd.out
-	@./data-structures/bin/linkedlistd.out
+	@gcc data-structures/linkedlistd.c -o data-structures/bin/c.out
+	@./data-structures/bin/c.out
 linkedlistdc:
-	@gcc data-structures/linkedlistdc.c -o data-structures/bin/linkedlistdc.out
-	@./data-structures/bin/linkedlistdc.out
+	@gcc data-structures/linkedlistdc.c -o data-structures/bin/c.out
+	@./data-structures/bin/c.out
 stack:
-	@gcc data-structures/stack.c -o data-structures/bin/stack.out
-	@./data-structures/bin/stack.out
-
+	@gcc data-structures/stack.c -o data-structures/bin/c.out
+	@./data-structures/bin/c.out
+stacklinked:
+	@gcc data-structures/stacklinked.c -o data-structures/bin/c.out
+	@./data-structures/bin/c.out
+queue:
+	@gcc data-structures/queue.c -o data-structures/bin/c.out
+	@./data-structures/bin/c.out
 
 
 

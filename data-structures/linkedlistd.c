@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 //
-// DOUBLE LINKED LIST
+// DOUBLY LINKED LIST
 //
 
 typedef struct node_t {
