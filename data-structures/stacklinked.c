@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -84,8 +83,7 @@ int pop(stack_t *stack) {
 
 void print_stack(const stack_t *stack) {
   printf("Printing stack:\n");
-  if (!stack->head) {
-    assert(stack->head == NULL);
+  if (is_empty(stack)) {
     printf("--No elements\n\n");
     return;
   }
