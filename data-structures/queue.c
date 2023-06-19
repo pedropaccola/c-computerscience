@@ -3,99 +3,110 @@
 #include <stdlib.h>
 
 //
-// QUEUE
+// CIRCULAR QUEUE
 //
 
 #define MAX_QUEUE_SIZE 10
 
 typedef struct queue {
-  int front;
-  int rear;
+  size_t front;
+  size_t rear;
+  int size;
   int elements[MAX_QUEUE_SIZE];
 } queue_t;
 
-queue_t *new_queue(int capacity) {
-  stack_t *stack = (stack_t *)malloc(sizeof(stack_t));
-  stack->top = -1;
-  stack->capacity = capacity;
-  stack->elements = (int *)malloc(sizeof(int) * capacity);
-  return stack;
+queue_t *new_queue() {
+  queue_t *queue = malloc(sizeof(queue_t));
+  if (!queue) {
+    printf("Could not create queue");
+    exit(EXIT_FAILURE);
+  }
+  queue->front = 0;
+  queue->rear = 0;
+  queue->size = 0;
+  return queue;
 }
 
-bool is_empty(stack_t *stack) { return stack->top == -1; }
+void destroy_queue(queue_t *queue) { free(queue); }
 
-bool is_full(stack_t *stack) {
-  int top = stack->top + 1;
-  return top == stack->capacity;
-}
+bool is_empty(const queue_t *queue) { return queue->size == 0; }
 
-void push(stack_t *stack, int value) {
-  printf("Push element %d\n", value);
+bool is_full(const queue_t *queue) { return queue->size == MAX_QUEUE_SIZE; }
 
-  if (is_full(stack)) {
-    printf("Stack is full\n");
+void enqueue(queue_t *queue, int value) {
+  if (is_full(queue)) {
+    printf("Can't enqueue, queue is full\n");
     return;
   }
-  stack->top++;
 
-  stack->elements[stack->top] = value;
-  // OR:
-  // int *ptr = stack->elements;
-  // *(ptr + stack->top) = value;
+  printf("Enqueuing %d\n", value);
+  queue->elements[queue->rear] = value;
+
+  queue->rear = (queue->rear + 1) % MAX_QUEUE_SIZE;
+  queue->size++;
+  return;
 }
 
-int pop(stack_t *stack) {
-  if (is_empty(stack)) {
-    printf("Stack is empty\n");
+int dequeue(queue_t *queue) {
+  if (is_empty(queue)) {
+    printf("Can't dequeue, queue is empty\n");
     return 0;
   }
 
-  printf("Pop element %d\n", stack->elements[stack->top]);
-  return stack->elements[stack->top];
-  stack->elements[stack->top] = 0;
-  // OR:
-  // int *ptr = stack->elements;
-  // printf("Pop element %d\n", *(ptr + stack->top));
-  // *(ptr + stack->top) = 0;
-  stack->top--;
+  int value = queue->elements[queue->front];
+  printf("Dequeuing %d\n", value);
+  queue->elements[queue->front] = -1;
+
+  queue->front = (queue->front + 1) % MAX_QUEUE_SIZE;
+  queue->size--;
+  return value;
 }
 
-int peek(stack_t *stack) {
-  if (is_empty(stack)) {
-    printf("Stack is empty\n");
-    return 0;
+void print_queue(const queue_t *queue) {
+  if (is_full(queue)) {
+    printf("Queue is Full\n");
   }
-
-  return stack->elements[stack->top];
-  // OR:
-  // int *ptr = stack->elements;
-  // return *(ptr + stack->top);
-}
-
-void print_stack(stack_t *stack) {
-  printf("top: %d, elements: ", stack->top);
-
-  for (int i = 0; i <= stack->top; i++) {
-    printf("%d, ", stack->elements[i]);
-    // OR:
-    // printf("%d, ", *(stack->elements + i));
+  if (is_empty(queue)) {
+    printf("Queue is Empty\n");
   }
-
+  printf("Size: %d,Front index: %zu, Rear index: %zu\n", queue->size,
+         queue->front, queue->rear);
+  printf("Elements: ");
+  for (size_t i = 0; i < MAX_QUEUE_SIZE; i++) {
+    printf("%d, ", queue->elements[i]);
+  }
   printf("\n\n");
 }
 
 int main() {
-  int capacity = 10;
-  stack_t *stack = new_stack(capacity);
-  print_stack(stack);
-  for (int i = 0; i <= capacity; i++) {
-    push(stack, i * 2);
-    print_stack(stack);
+  queue_t *queue = new_queue();
+  int value;
+  print_queue(queue);
+
+  // Queue 10, test full, dequeue 10, test empty
+  for (size_t i = 0; i < MAX_QUEUE_SIZE; i++) {
+    enqueue(queue, (i + 1) * 2);
+    print_queue(queue);
   }
-  int top_element = peek(stack);
-  printf("Peeking %d\n", top_element);
-  for (int i = 0; i <= capacity; i++) {
-    top_element = pop(stack);
-    print_stack(stack);
+  enqueue(queue, 1000);
+  print_queue(queue);
+  for (size_t i = 0; i < MAX_QUEUE_SIZE; i++) {
+    value = dequeue(queue);
+    print_queue(queue);
+  }
+  dequeue(queue);
+  print_queue(queue);
+
+  // Queue 3, dequeue 2, 7 times
+  printf("\n\nTESTING CIRCULARITY\n\n");
+  for (int i = 0; i < 7; i++) {
+    for (size_t i = 0; i < 3; i++) {
+      enqueue(queue, (i + 1) * 2);
+      print_queue(queue);
+    }
+    for (size_t i = 0; i < 2; i++) {
+      value = dequeue(queue);
+      print_queue(queue);
+    }
   }
 }
